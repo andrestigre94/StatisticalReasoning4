@@ -1,32 +1,9 @@
 ---
-title: "Activity 12: Statistical reasoning 4: prediction and evaluation"
-subtitle: Feb. 18th, 2026, Calvin Munson
-format: gfm
-execute:
-  warning: false
-editor: source
-  markdown: 
-    wrap: 72
+title: "StatisticalReasoning4"
+author: "LuisRouzaud&AndresTigreros"
+format: pdf
+editor: visual
 ---
-
-![XKCD-weather_balloons](photos/XKCD-weather_balloons.png)
-
-Welcome! This is the fourth statistical reasoning activity. The goals of this activity are to understand how to evaluate and compare the predictive accuracy of multiple models. Specifically, you will:
-
--   Run and interpret multiple models on the same dataset and evaluate them to see which is best supported using WAIC and PSIS.
-
-------------------------------------------------------------------------
-
-You will submit one output for this activity:
-
-1.  A **PDF** of a rendered Quarto document with all of your R code. Please create a new Quarto document (e.g. don't use this `README.qmd`) and include all of the code that appears in this document, your own code, and **answers to all of the questions** in the "Q#" sections. Submit this PDF through Gradescope.
-
-A reminder: **Please label the code** in your final submission in two ways:
-
-1.  denote your answers to each question using headers that correspond to the question you're answering, and
-2.  thoroughly "comment" your code: remember, this means annotating your code directly by typing descriptions of what each line does after a `#`. This will help future you!
-
-------------------------------------------------------------------------
 
 # 1. Practice with model comparison
 
@@ -34,7 +11,7 @@ A reminder: **Please label the code** in your final submission in two ways:
 
 By making models, we are trying to approximate the processes that affect things in a system. It's important to know how well our models are actually aligning with reality though. If we are not careful, we may "overfit" our models. *Overfitting* is when our model fits the data too closely, usually because we added too many parameters, which explains the data well but makes the model very bad at predicting future data (for instance, the final panel of the XKCD comic below).
 
-![XKCD_curve_fitting](photos/XKCD_curve_fitting.png)
+![XKCD_curve_fitting](photos/XKCD_curve_fitting.png){alt="XKCD_curve_fitting"}
 
 It is common in the field of ecology to have multiple candidate models of how a system works. How do we know which is "best" at making predictions? In this activity we will learn two metrics that can help: the Watanabe–Akaike information criterion (**WAIC**) and Pareto Smoothed Importance Sampling (**PSIS**).
 
@@ -44,9 +21,9 @@ Both metrics tell us how well the model will predict data it wasn't trained on, 
 
 Let's start by reading in the relevant packages
 
-```{r}
-library(brms) # for statistics
-library(tidyverse) # for data wrangling
+```{r eval=FALSE}
+library(brms) # for statistics 
+library(tidyverse) # for data wrangling 
 library(lterdatasampler)
 ```
 
@@ -76,17 +53,25 @@ Create four separate hypotheses describing how each predictor would be associate
 
 ### Q1.1a How might *mean* annual *water* temperature affect crab size?
 
+H1: If the mean annual air temperature is higher, then the average crab will smaller. This because warmer air T° would cause and increase in the metabolic rates of crabs, causing them to mature faster and stop growing at smaller sizes
+
 ------------------------------------------------------------------------
 
 ### Q1.1b How might *mean* annual *air* temperature affect crab size?
+
+H2: If the mean annual water temperature is higher, then the average crab will smaller. Hot water often leads to oxygen limitation in aquatic invertebrates; so since warmer water hold less oxygen, crabs will not support metabolic costs of a big body
 
 ------------------------------------------------------------------------
 
 ### Q1.1c How might the *sd* (variability) of *water* temperature affect crab size?
 
+H3: If there is high variability (SD) in water temperature, then the average crab size will be smaller. Fluctuations in water temperature are physiologically stressful. This will force the crabs to loss energy away from growth and toward maintein their homeostasis.
+
 ------------------------------------------------------------------------
 
 ### Q1.1d How might the *sd* (variability) of *air* temperature affect crab size?
+
+H4: If there is high variability (SD) in air temperature, then the average crab size will be larger. High variability often indicates strong seasonality; crabs in these ecosystems may evolve bigger bodies to store more energy in order to survive the periods of the year when temperatures are too extreme for getting food.
 
 ------------------------------------------------------------------------
 
@@ -131,13 +116,11 @@ summary(m.crab.lat.water)
 plot(m.crab.lat.water)
 ```
 
-------------------------------------------------------------------------
-
 #### Q1.2a Assess the output
 
 Assess whether the model ran correctly by looking at R hat, the chains, and the posterior distributions using the plot() and summary() functions. Describe your thought process about whether the model ran correctly in 1-2 sentences.
 
-=== ANSWER The Rhat is 1, the chains look overlapping and flat, and the posterior distributions look smooth, so it looks good. === END ANSWER
+**ANSWER:** The Rhat is 1, so is good. The chains look overlapping and flat, and the posterior distributions goes toward a central point.
 
 ------------------------------------------------------------------------
 
@@ -148,7 +131,7 @@ Interpret your model by answering:
 1.  What are the effects of your predictors? Remember to describe the effect using the units to make it biologically meaningful.
 2.  Are the effects reasonably different from zero? How do you know?
 
-=== ANSWER effect of latitude is 0.80mm of width/degree of latitude, 95% ranges 0.58 to 1.04, so comfortably not zero effect of water_temp is 0.41mm/degree Celsius, 95% ranges 0.13 to 0.70, so comfortably not zero === END ANSWER
+**ANSWER:** latitude causes an effect of 0.8mm bigger by each degree we increase. This with, 95% ranges 0.58 to 1.04 not crossing the zero. Also, we increase 0.41mm of size per each degree celsius we increase with a 95% CI ranges 0.13 to 0.70, so they do not cross zero.
 
 ------------------------------------------------------------------------
 
@@ -178,13 +161,11 @@ summary(m.crab.lat.air)
 plot(m.crab.lat.air)
 ```
 
-------------------------------------------------------------------------
-
 #### Q1.3a Assess the output
 
 Assess whether the model ran correctly by looking at R hat, the chains, and the posterior distributions using the plot() and summary() functions. Describe your thought process about whether the model ran correctly in 1-2 sentences.
 
-=== ANSWER The Rhat is 1, the chains look overlapping and flat, and the posterior distributions look smooth, so it looks good. === END ANSWER
+**ANSWER:** The Rhat is 1 so is good. The chains look overlapping and flat, and the posterior distributions goes toward a central point.
 
 ------------------------------------------------------------------------
 
@@ -195,7 +176,7 @@ Interpret your model by answering:
 1.  What are the effects of your predictors? Remember to describe the effect using the units to make it biologically meaningful.
 2.  Are the effects reasonably different from zero? How do you know?
 
-=== ANSWER effect of latitude is -0.99mm of width/degree of latitude, 95% ranges -1.66 to -0.33, so comfortably not zero effect of air_temp is -1.67mm/degree Celsius, 95% ranges -2.4 to -0.94, so comfortably not zero === END ANSWER
+**ANSWER:** We found that size decreases 0.99mm as we increase each degree of latitude. This has a 95% CI ranges from -1.66 to -0.33 not going through zero. Also, air temp decreases -1.67mm each degree of latitude we increase with a 95% CI going from -2.4 to -0.94. Not crossin zero :)
 
 ------------------------------------------------------------------------
 
@@ -225,13 +206,11 @@ summary(m.crab.lat.air.water)
 plot(m.crab.lat.air.water)
 ```
 
-------------------------------------------------------------------------
-
 #### Q1.4a Assess the output
 
 Assess whether the model ran correctly by looking at R hat, the chains, and the posterior distributions using the plot() and summary() functions. Describe your thought process about whether the model ran correctly in 1-2 sentences.
 
-=== ANSWER The Rhat is 1, the chains look overlapping and flat, and the posterior distributions look smooth, so it looks good. === END ANSWER
+**ANSWER:** The Rhat is 1 so is good. The chains look overlapping and flat, and the posterior distributions goes toward a central point.
 
 ------------------------------------------------------------------------
 
@@ -242,7 +221,7 @@ Interpret your model by answering:
 1.  What are the effects of your predictors? Remember to describe the effect using the units to make it biologically meaningful.
 2.  Are the effects reasonably different from zero? How do you know?
 
-=== ANSWER effect of latitude is -1.06mm of width/degree of latitude, 95% ranges -1.70 to -0.43, so comfortably not zero effect of air_temp is -2.41mm/degree Celsius, 95% ranges -3.18 to -1.65, so comfortably not zero effect of water_temp is 0.76mm/degree Celsius, 95% ranges 0.47 to 1.05, so comfortably not zero === END ANSWER
+**ANSWER:** latitude has a negative effect in size, decreasing 1.06mm by each degree we increase; CI95% ranges -1.70 to -0.43, so they do not cross zero. Air temperature also has a negative effect on size, decreasing 2.41mm per each celsius degree we increase; CI for this one goes from -3.18 to -1.65, so not crossing zero as well. Finally, for water temperature we have a positive effect, increasing the size of crabs 0.76mm pero each celsius degree we increase; 95% CI goes grom 0.47 to 1.05, not crossing zero as well
 
 ------------------------------------------------------------------------
 
@@ -250,7 +229,13 @@ Interpret your model by answering:
 
 In 2-4 sentences, compare the three models' estimates of the effect of latitude, water temp, and air temp; did estimates change across different models? Stay the same? Change in whether or not they are different from zero?
 
-=== ANSWER The effect of latitude switched sign from increasing body width to decreasing body width (sign became negative) once air_temp was put into the model; with only latitude and water_temp, latitude was positive. Otherwise, the effects are slightly different but basically agree. All model effects are likely different from zero. === END ANSWER
+**ANSWER:** Latitude had a positive effect on size when just looking at water temperature in the model. However, when we determined this using air temperature, it changed to a negative effect. When we include both of the terms, we found that both latitude and air temperature affect negatively the body size while water temperature has a positive effect.
+
+#### Q1.5 Why do you think a variable's sign changed?
+
+You should have noticed the change in sign for a variable. In 1-2 sentences, and in the context of your knowledge about causal inference from DAGs from last week, describe why you think the variable may have changed signs (hint: remember pipes?).
+
+**ANSWER:** because probably latitude is correlated with both temperatures and there were an effect we were not accounting for. Including both variables on the analysis open this unknown variable and thats why we do have a different effect.
 
 ------------------------------------------------------------------------
 
@@ -288,17 +273,13 @@ waic(m.crab.lat.air)
 waic(m.crab.lat.air.water)
 ```
 
-### Q1.6 Which model has the "best" WAIC value?
+### Q1.7 Which model has the "best" WAIC value?
 
 Remember, lower is better!
 
-=== ANSWER size \~ lat + mean water + mean air has the best (lowest) WAIC. === END ANSWER
-
-------------------------------------------------------------------------
+**ANSWER:** the model with lower WAIC = 1890.6 is the crab size \~ lat + mean water temp + mean air temperature
 
 Importantly, we want both the PSIS results and the WAIC results to align. In this case, they do, which is a good sign for our models.
-
-------------------------------------------------------------------------
 
 ## 1.4 Look at uncertainty around model predictions
 
@@ -307,8 +288,7 @@ Here we will look at some of the ways we can look at the uncertainty around mode
 The `predict_response(interval = "prediction")` function plots the 95% prediction intervals separately for each predictor, displaying uncertainty around where the data may lay around the model.
 
 ```{r}
-preds <- ggeffects::predict_response(m.crab.lat.air.water, 
-                            interval = "prediction")
+preds <- ggeffects::predict_response(m.crab.lat.air.water,                              interval = "prediction") 
 plot(preds)
 ```
 
@@ -340,132 +320,77 @@ The three models should be:
 -   size \~ latitude + air_temp_sd
 -   size \~ latitude + water_temp_sd + air_temp_sd
 
-------------------------------------------------------------------------
-
 ### Q2.1 Run all three models
 
 Run and store all three models. Remember to change the name of 1) the data that the model output is stored as and 2) the output file name
 
-===== START ANSWER
+**ANSWER:**
 
 #### size \~ latitude + water temp sd
 
 ```{r}
-# latitude and water model
-m.crab.lat.watersd <- 
-  brm(data = pie_crab, # Give the model the pie_crab data
-      # Choose a gaussian (normal) distribution
+m.crab.lat.water_sd <- 
+  brm(data = pie_crab,
       family = gaussian,
-      # Specify the model here. 
       size ~ latitude + water_temp_sd,
-      # Here's where you specify parameters for executing the Markov chains
-      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      # Setting the "seed" determines which random numbers will get sampled.
-      # In this case, it makes the randomness of the Markov chain runs reproducible 
-      # (so that both of us get the exact same results when running the model)
       seed = 4,
-      # Save the fitted model object as output - helpful for reloading in the output later
-      file = "temporary/m.crab.lat.watersd")
-```
-
-Now look at the output:
-
-```{r}
-summary(m.crab.lat.watersd)
+      file = "temporary/m.crab.lat.water_sd")
 ```
 
 ```{r}
-plot(m.crab.lat.watersd)
+summary(m.crab.lat.water_sd)
 ```
 
-------------------------------------------------------------------------
+```{r}
+plot(m.crab.lat.water_sd)
+```
 
 #### size \~ latitude + air temp sd
 
 ```{r}
-# latitude and air model
-m.crab.lat.airsd <- 
-  brm(data = pie_crab, # Give the model the pie_crab data
-      # Choose a gaussian (normal) distribution
+m.crab.lat.air_sd <- 
+  brm(data = pie_crab,
       family = gaussian,
-      # Specify the model here. 
       size ~ latitude + air_temp_sd,
-      # Here's where you specify parameters for executing the Markov chains
-      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      # Setting the "seed" determines which random numbers will get sampled.
-      # In this case, it makes the randomness of the Markov chain runs reproducible 
-      # (so that both of us get the exact same results when running the model)
       seed = 4,
-      # Save the fitted model object as output - helpful for reloading in the output later
-      file = "temporary/m.crab.lat.airsd")
+      file = "temporary/m.crab.lat.air_sd")
 ```
 
 ```{r}
-summary(m.crab.lat.airsd)
+summary(m.crab.lat.air_sd)
 ```
 
-------------------------------------------------------------------------
+```{r}
+plot(m.crab.lat.air_sd)
+```
 
 #### size \~ latitude + water temp sd + air temp sd
 
 ```{r}
-# latitude and air model
-m.crab.lat.airsd.watersd <- 
-  brm(data = pie_crab, # Give the model the pie_crab data
-      # Choose a gaussian (normal) distribution
+m.crab.lat.water.air_sd <- 
+  brm(data = pie_crab,
       family = gaussian,
-      # Specify the model here. 
-      size ~ latitude + air_temp_sd + water_temp_sd,
-      # Here's where you specify parameters for executing the Markov chains
-      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
+      size ~ latitude + water_temp_sd + air_temp_sd,
       iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      # Setting the "seed" determines which random numbers will get sampled.
-      # In this case, it makes the randomness of the Markov chain runs reproducible 
-      # (so that both of us get the exact same results when running the model)
       seed = 4,
-      # Save the fitted model object as output - helpful for reloading in the output later
-      file = "temporary/m.crab.lat.airsd.watersd")
+      file = "temporary/m.crab.lat.water.air_sd")
 ```
 
 ```{r}
-summary(m.crab.lat.airsd.watersd)
-plot(m.crab.lat.airsd.watersd)
-```
-
-#### size \~ ALL variables - not required for the activity
-
-```{r}
-# latitude and air model
-m.crab.allvars <- 
-  brm(data = pie_crab, # Give the model the pie_crab data
-      # Choose a gaussian (normal) distribution
-      family = gaussian,
-      # Specify the model here. 
-      size ~ latitude + air_temp + water_temp + air_temp_sd + water_temp_sd,
-      # Here's where you specify parameters for executing the Markov chains
-      # We're using similar to the defaults, except we set cores to 4 so the analysis runs faster than the default of 1
-      iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      # Setting the "seed" determines which random numbers will get sampled.
-      # In this case, it makes the randomness of the Markov chain runs reproducible 
-      # (so that both of us get the exact same results when running the model)
-      seed = 4,
-      # Save the fitted model object as output - helpful for reloading in the output later
-      file = "temporary/m.crab.allvars")
+summary(m.crab.lat.water.air_sd)
 ```
 
 ```{r}
-summary(m.crab.allvars)
+plot(m.crab.lat.water.air_sd)
 ```
-
-------------------------------------------------------------------------
 
 ### Q2.2 Assess all three models
 
 Assess whether each model ran correctly by looking at R hat, the chains, and the posterior distributions using the plot() and summary() functions. Describe your thought process about whether the model ran correctly in 1-2 sentences per model.
 
-=== ANSWER For each model, the Rhat is 1, the chains look overlapping and flat, and the posterior distributions look smooth, so it looks good. === END ANSWER
+**ANSWER:** For all three models ran we observe that the RHAT is good in each with a value of 1.00. Also, chains look flat and good and the posterior distributions seem decent
 
 ------------------------------------------------------------------------
 
@@ -478,18 +403,19 @@ Interpret all three models by answering:
 
 Please write 2-3 sentences for each model
 
-=== START ANSWER
-
-Looks like all SD estimates' 95% CIs overlap zero... May need to rethink this as an example (or maybe not!)
+**ANSWER:**
 
 ```{r}
-summary(m.crab.lat.watersd)
-summary(m.crab.lat.airsd)
-summary(m.crab.lat.airsd.watersd)
-
+summary(m.crab.lat.water_sd) #(1)
+summary(m.crab.lat.air_sd) #(2)
+summary(m.crab.lat.water.air_sd) #(3)
 ```
 
-===== END ANSWER
+For 1) we found that there is a positive effect of latitude on crab size with 0.48mm of increase per each sd we go up. This parameter has CI 95% going from 0.03 to 0.42, not crossing zero. Also, water temperature sd has a positive effect of increase 0.02mm size as we go up each celsius degree of standard deviation. However, this one seems not confident because the CI goes crom -0.22 to 0.26 through zero.
+
+For 2) we found that there is also a positive effect of latitude, increasi 0.53mm of size each latitude degree we increase, being confident of this result because CI 95% goes from 0.42 to 0.64, not crossing zero. However, air temperate sd seems to have a negative effect, decreasing 0.24mm size as we increase 1 celsius degree of standard deviation. However, this do not seem confident due to cross zero, CI goes from -0.71 to 0.26
+
+For 3), which includes both, we have a different interpretation. In this model , latitude and water temperature sd both increase size. This by 0.56 and 0.15 mm respectively as we increase each respective degree of latitude and celsius temperature. Latitude is trustworthy because it do not cross zero on its CI, goes from 0.43 to 0.68, while water temp sd goes from -0.18 to 0.47 is not a good result. On the other hand, air temp sd has a negative effect on crab size. It decreases their size by 0.4 mm as we increase in celisus of standard deviation
 
 ------------------------------------------------------------------------
 
@@ -497,11 +423,7 @@ summary(m.crab.lat.airsd.watersd)
 
 In 2-4 sentences, compare the three models' estimates of the effect of latitude, water temp sd, and air temp sd; did estimates change across different models? Stay the same? Change in whether or not they are different from zero?
 
-=== ANSWER
-
-The effect of latitude changes slightly across all three models and the 95% CIs never intersect zero, indicating that it is not zero. Water temp sd and air temp sd jump around a little in their estimates, but always include zero within the 95% CI, so we can conclude that the effect of these parameters is likely zero.
-
-=== END ANSWER
+**ANSWER:** Latitude changed in a slight way its effect across the models that were run. All its CI 95% never crossed zero. However, air and water temperature sd's varied in their estimates and always included or crossed the zero in their CI. So, these variables have no effect
 
 ------------------------------------------------------------------------
 
@@ -514,54 +436,26 @@ Calculate and compare the PSIS and AIC values for each model and answer:
 3.  Which model has the lowest AIC?
 4.  Do PSIS and AIC values agree on which model has the best out of sample prediction?
 
-=====ANSWER
-
-PSIS:
-
-All Pareto k estimates are good (\<0.7)
-
-The size \~ lat + sd air has the lowers PSIS by a small amount
+**ANSWER:**
 
 ```{r}
-# Look at "leave one out" results for all three models
-# size ~ lat + sd water
-loo(m.crab.lat.watersd)
-# size ~ lat + sd air
-loo(m.crab.lat.airsd)
-# size ~ lat + sd water + sd air
-loo(m.crab.lat.airsd.watersd)
+loo(m.crab.lat.water_sd)
+loo(m.crab.lat.air_sd)
+loo(m.crab.lat.water.air_sd)
 ```
-
-WAIC:
-
-The size \~ lat + sd air has the lowers WAIC by a small amount
 
 ```{r}
-# Look at "leave one out" results for all three models
-# size ~ lat + sd water
-waic(m.crab.lat.watersd)
-# size ~ lat + sd air
-waic(m.crab.lat.airsd)
-# size ~ lat + sd water + sd air
-waic(m.crab.lat.airsd.watersd)
-
+waic(m.crab.lat.water_sd)
+waic(m.crab.lat.air_sd)
+waic(m.crab.lat.water.air_sd)
 ```
 
-The crab size \~ latitude + air temp sd is marginally the best model; both PSIS and WAIC are lowest for it.
+**ANSWER:**
 
-=====END ANSWER
+1.  The Paretos are nice because all of them are below 0.7
 
-------------------------------------------------------------------------
+2.  Model with lowest PSIS is the model size \~ latitude + air temp sd
 
-### Render to PDF
+3.  Model with lowest WAIC is the model size \~ latitude + air temp sd
 
-When you have finished, remember to pull, stage, commit, and push with GitHub:
-
--   Pull to check for updates to the remote branch
--   Stage your edits (after saving your document!) by checking the documents you'd like to push
--   Commit your changes with a commit message
--   Push your changes to the remote branch
-
-Then submit the well-labeled PDF on Gradescope. Thanks!
-
-![StrangePlanet_NathanPyle_weatherForecasting](photos/StrangePlanet_weatherForecasting.jpeg)
+4.  Yes, both the PSIS and WAIC agreed on which is the best output which is the second model. However, is it right? They do have both the SAME results. Calvin mentioned that this may happen when you have enough sample size so the math of both PSIS and WAIC converge.
